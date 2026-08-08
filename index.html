@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Data Cameroun - Commande & Livraison Express</title>
+    <style>
+        :root {
+            --orange: #FF6600;
+            --yellow-mtn: #FFCC00;
+            --dark: #111111;
+            --gray-bg: #F4F5F7;
+            --light: #FFFFFF;
+            --success: #28A745;
+            --danger: #DC3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-bg);
+            color: var(--dark);
+            padding-bottom: 40px;
+        }
+
+        header {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--orange);
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: #AAA;
+            margin-top: 4px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+            border-left: 4px solid var(--orange);
+            padding-left: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Catalogue Cards */
+        .catalog {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .card.selected {
+            border-color: var(--orange);
+            background-color: #FFFDFB;
+        }
+
+        .badge-orange {
+            background: var(--orange);
+            color: white;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .badge-mtn {
+            background: var(--yellow-mtn);
+            color: black;
+            font-weight: bold;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .card-price {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .card-details {
+            font-size: 0.85rem;
+            color: #555;
+            background: #F9F9F9;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 5px;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #CCC;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Recap Panel */
+        .recap-box {
+            background: var(--dark);
+            color: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .recap-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .recap-total {
+            border-top: 1px solid #444;
+            padding-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--yellow-mtn);
+        }
+
+        /* Buttons */
+        .btn-submit {
+            background: var(--success);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: var(--danger);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .notice {
+            font-size: 0.8rem;
+            color: #777;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚡ SIM Internet Express</h1>
+        <p>Douala & Yaoundé • Paiement à la Livraison</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- SECTION 1: PROFIL CLIENT -->
+        <div class="section-title">1. Informations Client</div>
+        
+        <div class="form-group">
+            <label>Nom complet *</label>
+            <input type="text" id="clientName" placeholder="Ex: Franck Tiodjio" required>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Numéro WhatsApp *</label>
+                <input type="tel" id="clientWhatsapp" placeholder="6XXXXXXXX" required>
+            </div>
+            <div class="form-group">
+                <label>Appel Urgence *</label>
+                <input type="tel" id="clientPhone" placeholder="6XXXXXXXX" required>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="clientEmail" placeholder="nom@email.com">
+            </div>
+            <div class="form-group">
+                <label>Date de Naissance</label>
+                <input type="date" id="clientDob">
+            </div>
+        </div>
+
+        <!-- SECTION 2: SELECTION DU FORFAIT -->
+        <div class="section-title">2. Choisir votre Forfait SIM</div>
+        
+        <div class="form-group">
+            <label>Type d'achat :</label>
+            <select id="buyerType" onchange="updatePricesAndQuantities()">
+                <option value="detail">🛍️ Usage Personnel (Détail)</option>
+                <option value="gros">💼 Revendeur / Grossiste (À partir de 10 SIM)</option>
+            </select>
+        </div>
+
+        <div class="catalog" id="catalogList">
+            <!-- Injecté dynamiquement par JavaScript -->
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>Quantité de puces :</label>
+            <select id="quantitySelect" onchange="calculateTotal()"></select>
+        </div>
+
+        <!-- SECTION 3: LIVRAISON -->
+        <div class="section-title">3. Mode de Livraison & Adresse</div>
+
+        <div class="form-group">
+            <label>Ville :</label>
+            <select id="citySelect" onchange="updateNeighborhoods()">
+                <option value="Douala">Douala</option>
+                <option value="Yaounde">Yaoundé</option>
+                <option value="Autre">Autre Ville (Expédition Agence)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="neighborhoodGroup">
+            <label>Quartier :</label>
+            <select id="neighborhoodSelect" onchange="calculateTotal()"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Mode de Réception :</label>
+            <select id="deliveryOption" onchange="calculateTotal()">
+                <option value="livraison">🚀 Livraison à domicile (+1 000 FCFA)</option>
+                <option value="retrait">📍 Retrait sur place Gratuit (0 FCFA)</option>
+            </select>
+            <small id="retraitLocation" style="color: var(--orange); font-weight: bold; display: none; margin-top: 4px;"></small>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Date de livraison souhaitée :</label>
+                <input type="date" id="deliveryDate">
+            </div>
+            <div class="form-group">
+                <label>Heure de livraison :</label>
+                <select id="deliveryTime">
+                    <option value="Matin (08h00 - 11h00)">Matin (08h00 - 11h00)</option>
+                    <option value="Midi (11h00 - 14h00)">Midi (11h00 - 14h00)</option>
+                    <option value="Après-midi (14h00 - 17h00)">Après-midi (14h00 - 17h00)</option>
+                    <option value="Soir (17h00 - 20h00)">Soir (17h00 - 20h00)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- RECAPITULATIF & VALIDATION -->
+        <div class="recap-box">
+            <div class="recap-row">
+                <span>Article :</span>
+                <span id="recapArticle">-</span>
+            </div>
+            <div class="recap-row">
+                <span>Prix unitaire :</span>
+                <span id="recapUnitPrice">0 FCFA</span>
+            </div>
+            <div class="recap-row">
+                <span>Frais de Livraison / Expédition :</span>
+                <span id="recapDelivery">0 FCFA</span>
+            </div>
+            <div class="recap-row recap-total">
+                <span>TOTAL À PAYER :</span>
+                <span id="recapTotal">0 FCFA</span>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="sendToWhatsApp()">📲 VALIDER SUR WHATSAPP</button>
+        <button class="btn-cancel" id="cancelBtn" onclick="cancelOrder()">❌ Annuler ma dernière commande</button>
+        
+        <p class="notice">Paiement 100% à la livraison cash ou Mobile Money.</p>
+    </div>
+
+    <script>
+        const myWhatsApp = "237695043610";
+
+        const products = [
+            {
+                id: "o10",
+                operator: "Orange",
+                name: "Orange 10 GIGA",
+                detailPrice: 2500,
+                grosPrice: 1400,
+                validity: "30 Jours",
+                solde: "*123# ou App My Orange",
+                renew: "Rechargeable via Orange Money"
+            },
+            {
+                id: "o15",
+                operator: "Orange",
+                name: "Orange 15 GIGA",
+                detailPrice: 3000,
+                grosPrice: 1800,
+                validity: "30 Jours",
+                solde: "*123# ou App My Orange",
+                renew: "Rechargeable via Orange Money"
+            },
+            {
+                id: "o30",
+                operator: "Orange",
+                name: "Orange 10 Go/Mois pendant 3 Mois (30 Go Total)",
+                detailPrice: 3500,
+                grosPrice: 1800,
+                validity: "90 Jours (10 Go/mois)",
+                solde: "*123#",
+                renew: "Rechargeable à l'échéance"
+            },
+            {
+                id: "o45",
+                operator: "Orange",
+                name: "Orange 15 Go/Mois pendant 3 Mois (45 Go Total)",
+                detailPrice: 4500,
+                grosPrice: 2200,
+                validity: "90 Jours (15 Go/mois)",
+                solde: "*123#",
+                renew: "Rechargeable à l'échéance"
+            },
+            {
+                id: "mtn10",
+                operator: "MTN",
+                name: "MTN Illimité Box 10 Mo/s",
+                detailPrice: 17500,
+                grosPrice: 17500,
+                validity: "1 Mois Illimité",
+                solde: "*123# ou App MyMTN",
+                renew: "Renouvelable via MoMo"
+            }
+        ];
+
+        const neighborhoods = {
+            "Douala": ["Bonabéri (Point Retrait)", "Akwa", "Bonapriso", "Bonamoussadi", "Makepe", "Ndokoti", "Bepanda", "Logbessou", "Kotto", "Yassa", "Nyalla", "Village", "Bali"],
+            "Yaounde": ["Mvog-Mbi (Point Retrait)", "Bastos", "Mendong", "Biyem-Assi", "Omnisports", "Essos", "Mvan", "Nsam", "Melen", "Ngoa-Ekelle", "Tsinga", "Odza", "Etoudi"]
+        };
+
+        let selectedProductId = "o10";
+
+        function init() {
+            renderCatalog();
+            updatePricesAndQuantities();
+            updateNeighborhoods();
+            
+            // Set today date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('deliveryDate').value = today;
+        }
+
+        function renderCatalog() {
+            const list = document.getElementById("catalogList");
+            const isGros = document.getElementById("buyerType").value === "gros";
+            list.innerHTML = "";
+
+            products.forEach(p => {
+                const price = isGros ? p.grosPrice : p.detailPrice;
+                const badgeClass = p.operator === "Orange" ? "badge-orange" : "badge-mtn";
+                const isSelected = p.id === selectedProductId ? "selected" : "";
+
+                list.innerHTML += `
+                    <div class="card ${isSelected}" onclick="selectProduct('${p.id}')">
+                        <span class="${badgeClass}">${p.operator}</span>
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-price">${price.toLocaleString()} FCFA</div>
+                        <div class="card-details">
+                            ⏱ <b>Validité :</b> ${p.validity}<br>
+                            📊 <b>Solde :</b> Composez ${p.solde}<br>
+                            🔄 <b>Renouvellement :</b> ${p.renew}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectProduct(id) {
+            selectedProductId = id;
+            renderCatalog();
+            calculateTotal();
+        }
+
+        function updatePricesAndQuantities() {
+            const isGros = document.getElementById("buyerType").value === "gros";
+            const qtySelect = document.getElementById("quantitySelect");
+            qtySelect.innerHTML = "";
+
+            const start = isGros ? 10 : 1;
+            const end = isGros ? 50 : 9;
+
+            for (let i = start; i <= end; i++) {
+                qtySelect.innerHTML += `<option value="${i}">${i} SIM</option>`;
+            }
+
+            renderCatalog();
+            calculateTotal();
+        }
+
+        function updateNeighborhoods() {
+            const city = document.getElementById("citySelect").value;
+            const group = document.getElementById("neighborhoodGroup");
+            const select = document.getElementById("neighborhoodSelect");
+            const deliveryOption = document.getElementById("deliveryOption");
+            const retraitInfo = document.getElementById("retraitLocation");
+
+            select.innerHTML = "";
+
+            if (city === "Autre") {
+                group.style.display = "none";
+                deliveryOption.innerHTML = `<option value="expedition">📦 Expédition Agence (À partir de 2 000 FCFA)</option>`;
+                retraitInfo.style.display = "none";
+            } else {
+                group.style.display = "flex";
+                deliveryOption.innerHTML = `
+                    <option value="livraison">🚀 Livraison à domicile (+1 000 FCFA)</option>
+                    <option value="retrait">📍 Retrait sur place Gratuit (0 FCFA)</option>
+                `;
+                
+                neighborhoods[city].forEach(n => {
+                    select.innerHTML += `<option value="${n}">${n}</option>`;
+                });
+
+                if (city === "Douala") {
+                    retraitInfo.innerText = "📍 Lieu de retrait sur place : BONABÉRI";
+                } else {
+                    retraitInfo.innerText = "📍 Lieu de retrait sur place : MVOG-MBI";
+                }
+            }
+
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            const product = products.find(p => p.id === selectedProductId);
+            const isGros = document.getElementById("buyerType").value === "gros";
+            const qty = parseInt(document.getElementById("quantitySelect").value) || 1;
+            const unitPrice = isGros ? product.grosPrice : product.detailPrice;
+            const city = document.getElementById("citySelect").value;
+            const mode = document.getElementById("deliveryOption").value;
+            const retraitInfo = document.getElementById("retraitLocation");
+
+            let deliveryFee = 0;
+
+            if (mode === "livraison") {
+                deliveryFee = 1000;
+                retraitInfo.style.display = "none";
+            } else if (mode === "expedition") {
+                deliveryFee = 2000;
+                retraitInfo.style.display = "none";
+            } else if (mode === "retrait") {
+                deliveryFee = 0;
+                retraitInfo.style.display = "block";
+            }
+
+            const total = (unitPrice * qty) + deliveryFee;
+
+            document.getElementById("recapArticle").innerText = `${product.name} (x${qty})`;
+            document.getElementById("recapUnitPrice").innerText = `${unitPrice.toLocaleString()} FCFA`;
+            document.getElementById("recapDelivery").innerText = `${deliveryFee.toLocaleString()} FCFA`;
+            document.getElementById("recapTotal").innerText = `${total.toLocaleString()} FCFA`;
+        }
+
+        function sendToWhatsApp() {
+            const name = document.getElementById("clientName").value.trim();
+            const whatsapp = document.getElementById("clientWhatsapp").value.trim();
+            const phone = document.getElementById("clientPhone").value.trim();
+            const email = document.getElementById("clientEmail").value.trim() || "Non précisé";
+            const dob = document.getElementById("clientDob").value || "Non précisée";
+            
+            if (!name || !whatsapp || !phone) {
+                alert("Veuillez remplir votre Nom, Numéro WhatsApp et Numéro d'Appel.");
+                return;
+            }
+
+            const product = products.find(p => p.id === selectedProductId);
+            const isGros = document.getElementById("buyerType").value === "gros";
+            const qty = document.getElementById("quantitySelect").value;
+            const unitPrice = isGros ? product.grosPrice : product.detailPrice;
+            const city = document.getElementById("citySelect").value;
+            const neighborhood = city !== "Autre" ? document.getElementById("neighborhoodSelect").value : "Hors Zone";
+            const mode = document.getElementById("deliveryOption").selectedOptions[0].text;
+            const deliveryFee = document.getElementById("recapDelivery").innerText;
+            const total = document.getElementById("recapTotal").innerText;
+            const date = document.getElementById("deliveryDate").value;
+            const time = document.getElementById("deliveryTime").value;
+
+            const text = `📦 *NOUVELLE COMMANDE SIM INTERNET*%0A%0A` +
+                `👤 *CLIENT :* ${name}%0A` +
+                `📱 *WhatsApp :* ${whatsapp}%0A` +
+                `📞 *Appel :* ${phone}%0A` +
+                `📧 *Email :* ${email}%0A` +
+                `🎂 *Né(e) le :* ${dob}%0A%0A` +
+                `🛍️ *COMMANDE :*%0A` +
+                `• Article : ${product.name}%0A` +
+                `• Quantité : ${qty} SIM (${isGros ? 'Tarif Gros' : 'Tarif Détail'})%0A` +
+                `• Prix unitaire : ${unitPrice.toLocaleString()} FCFA%0A%0A` +
+                `📍 *LIVRAISON :*%0A` +
+                `• Ville : ${city}%0A` +
+                `• Quartier : ${neighborhood}%0A` +
+                `• Mode : ${mode}%0A` +
+                `• Date souhaitée : ${date} à ${time}%0A%0A` +
+                `💵 *PAIEMENT À LA LIVRAISON :*%0A` +
+                `• Frais Livraison/Expédition : ${deliveryFee}%0A` +
+                `• *TOTAL NET À PAYER : ${total}*`;
+
+            window.open(`https://wa.me/${myWhatsApp}?text=${text}`, '_blank');
+
+            // Activer le bouton d'annulation
+            document.getElementById("cancelBtn").style.display = "block";
+        }
+
+        function cancelOrder() {
+            const name = document.getElementById("clientName").value.trim() || "Client";
+            const text = `❌ *ANNULATION DE COMMANDE*%0A%0ABonjour, je souhaite annuler ma récente commande au nom de : *${name}*.%0A%0ADésolé pour le dérangement.`;
+            window.open(`https://wa.me/${myWhatsApp}?text=${text}`, '_blank');
+        }
+
+        // Démarrage automatique
+        init();
+    </script>
+</body>
+</html>
